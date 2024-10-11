@@ -7,19 +7,7 @@ from dotenv import load_dotenv
 import webbrowser
 
 # Set app title and icon
-st.set_page_config(page_title="FocusTrack", page_icon="icon.png")
-
-# Serve the favicon icon using Streamlit's static path
-def serve_icon():
-    st.markdown(
-        f"""
-        <link rel="icon" href="/static/icon.png" type="image/png">
-        """,
-        unsafe_allow_html=True
-    )
-
-# Call this function at the start of the Streamlit app
-serve_icon()
+st.set_page_config(page_title="FocusTrack", page_icon="static/icon.png")
 
 # Load environment variables
 load_dotenv()
@@ -32,7 +20,7 @@ USER_DATA_FILE = 'user_data.csv'
 TASKS_DATA_FILE = 'tasks_data.csv'
 COMPLETED_TASKS_FILE = 'completed_tasks.csv'
 TIMER_HTML_FILE = 'timer.html'
-ICON_FILE_PATH = 'icon.png'  # Local file path for the icon
+ICON_FILE_PATH = 'static/icon.png'  # Local file path for the icon
 
 # Initialize session state
 def initialize_session_state():
@@ -96,21 +84,12 @@ def load_tasks_data():
 
 def save_tasks_data(tasks_list):
     tasks_df = pd.DataFrame(tasks_list, columns=['username', 'task_name', 'duration', 'completed'])
-    tasks_df['username'] = tasks_df['username'].fillna('')
-    tasks_df['task_name'] = tasks_df['task_name'].fillna('')
-    tasks_df['duration'] = tasks_df['duration'].fillna(0).astype(int)
-    tasks_df['completed'] = tasks_df['completed'].astype(bool)
     tasks_df.to_csv(TASKS_DATA_FILE, index=False)
 
 def load_completed_tasks():
     if os.path.exists(COMPLETED_TASKS_FILE) and os.path.getsize(COMPLETED_TASKS_FILE) > 0:
         try:
-            completed_tasks_df = pd.read_csv(COMPLETED_TASKS_FILE)
-            required_columns = ['username', 'task_name', 'completion_date']
-            for column in required_columns:
-                if column not in completed_tasks_df.columns:
-                    completed_tasks_df[column] = ''
-            return completed_tasks_df
+            return pd.read_csv(COMPLETED_TASKS_FILE)
         except pd.errors.EmptyDataError:
             return pd.DataFrame(columns=['username', 'task_name', 'completion_date'])
     else:
@@ -128,16 +107,7 @@ def save_completed_task(username, task_name):
 
 def get_user_tasks(username):
     tasks_df = load_tasks_data()
-    user_tasks = tasks_df[tasks_df['username'] == username]
-    tasks = []
-    for _, row in user_tasks.iterrows():
-        tasks.append({
-            'username': row['username'],
-            'task_name': row['task_name'],
-            'duration': row['duration'],
-            'completed': row['completed']
-        })
-    return tasks
+    return tasks_df[tasks_df['username'] == username].to_dict('records')
 
 def add_task_to_csv(username, task_name, duration):
     tasks_df = load_tasks_data()
@@ -152,16 +122,9 @@ def add_task_to_csv(username, task_name, duration):
 
 def complete_task(task_index):
     task = st.session_state['tasks'][task_index]
-    username = st.session_state['username']
-    task_name = task['task_name']
-
-    save_completed_task(username, task_name)
-
-    tasks_df = load_tasks_data()
-    tasks_df = tasks_df[~((tasks_df['username'] == username) & (tasks_df['task_name'] == task_name))]
-    save_tasks_data(tasks_df.to_dict('records'))
-
+    save_completed_task(st.session_state['username'], task['task_name'])
     st.session_state['tasks'].pop(task_index)
+    save_tasks_data(st.session_state['tasks'])
 
 # Function to start the Pomodoro timer and generate timer.html
 def start_timer(task_index):
@@ -171,13 +134,12 @@ def start_timer(task_index):
 
     end_time = st.session_state['timer_end'].strftime('%Y-%m-%d %H:%M:%S')
     task_name = task['task_name']
-    icon_path = os.path.abspath(ICON_FILE_PATH).replace("\\", "/")
 
     countdown_html = f"""
     <html>
     <head>
         <title>Pomodoro Timer</title>
-        <link rel="icon" href="file:///{icon_path}" type="image/png">
+        <link rel="icon" href="{ICON_FILE_PATH}" type="image/png">
     </head>
     <body style="text-align: center; font-family: Arial, sans-serif;">
         <h1>Countdown Timer</h1>

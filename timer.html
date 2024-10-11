@@ -2,7 +2,7 @@
     <html>
     <head>
         <title>Pomodoro Timer</title>
-        <link rel="icon" href="file:////Users/mac/Documents/Python-Projects/FocusTrack/icon.png" type="image/png">
+        <link rel="icon" href="static/icon.png" type="image/png">
     </head>
     <body style="text-align: center; font-family: Arial, sans-serif;">
         <h1>Countdown Timer</h1>
@@ -10,7 +10,7 @@
         <p id="countdown" style="font-size: 48px; color: red;"></p>
         <button id="breakButton" style="display: none;" onclick="startBreak()">Start Break</button>
         <script>
-            var endTime = new Date("2024-10-11 14:06:03").getTime();
+            var endTime = new Date("2024-10-11 20:07:23").getTime();
             var timerInterval = setInterval(function() {
                 var now = new Date().getTime();
                 var distance = endTime - now;

@@ -6,10 +6,11 @@
     </head>
     <body style="text-align: center; font-family: Arial, sans-serif;">
         <h1>Countdown Timer</h1>
-        <h2 id="taskName" style="color: blue;">Task: test 18</h2>
+        <h2 id="taskName" style="color: blue;">Task: Create IT Service Catalogue</h2>
         <p id="countdown" style="font-size: 48px; color: red;"></p>
+        <button id="breakButton" style="display: none;" onclick="startBreak()">Start Break</button>
         <script>
-            var endTime = new Date("2024-10-10 23:13:29").getTime();
+            var endTime = new Date("2024-10-11 14:06:03").getTime();
             var timerInterval = setInterval(function() {
                 var now = new Date().getTime();
                 var distance = endTime - now;
@@ -20,9 +21,30 @@
                     document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s ";
                 } else {
                     document.getElementById("countdown").innerHTML = "Time's up!";
+                    document.getElementById("breakButton").style.display = "block";
                     clearInterval(timerInterval);
                 }
             }, 1000);
+
+            function startBreak() {
+                var breakDuration = 5;
+                var breakEndTime = new Date(new Date().getTime() + breakDuration * 60 * 1000).getTime();
+                document.getElementById("breakButton").style.display = "none";
+
+                var breakInterval = setInterval(function() {
+                    var now = new Date().getTime();
+                    var distance = breakEndTime - now;
+
+                    if (distance > 0) {
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        document.getElementById("countdown").innerHTML = "Break Time: " + minutes + "m " + seconds + "s ";
+                    } else {
+                        document.getElementById("countdown").innerHTML = "Break is over!";
+                        clearInterval(breakInterval);
+                    }
+                }, 1000);
+            }
         </script>
     </body>
     </html>
