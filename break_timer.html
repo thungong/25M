@@ -1,0 +1,29 @@
+
+    <html>
+    <head>
+        <title>Break Timer</title>
+        <link rel="icon" href="file:////Users/mac/Documents/Python-Projects/FocusTrack/icon.png" type="image/png">
+    </head>
+    <body style="text-align: center; font-family: Arial, sans-serif;">
+        <h1>Break Timer</h1>
+        <h2 style="color: green;">Take a break!</h2>
+        <p id="countdown" style="font-size: 48px; color: blue;"></p>
+        <script>
+            var endTime = new Date("2024-10-10 23:11:39").getTime();
+            var timerInterval = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = endTime - now;
+
+                if (distance > 0) {
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s ";
+                } else {
+                    document.getElementById("countdown").innerHTML = "Break's over!";
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        </script>
+    </body>
+    </html>
+    
