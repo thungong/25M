@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import hashlib
 from datetime import datetime, timedelta
@@ -139,7 +140,7 @@ def start_timer(task_index):
     <html>
     <head>
         <title>Pomodoro Timer</title>
-        <link rel="icon" href="{ICON_FILE_PATH}" type="image/png">
+        <link rel="icon" href="static/icon.png" type="image/png">
     </head>
     <body style="text-align: center; font-family: Arial, sans-serif;">
         <h1>Countdown Timer</h1>
@@ -187,10 +188,8 @@ def start_timer(task_index):
     </html>
     """
 
-    with open(TIMER_HTML_FILE, 'w') as file:
-        file.write(countdown_html)
-
-    webbrowser.open(f"file://{os.path.realpath(TIMER_HTML_FILE)}")
+    # Use Streamlit's HTML component to display the timer directly in the app
+    components.html(countdown_html, height=600)
 
 def login_signup_page():
     st.title("Login or Sign Up")
